@@ -1,9 +1,6 @@
 package com.crypto.calculator;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 public class Data {
     private long t;
@@ -18,10 +15,7 @@ public class Data {
 
     private BigDecimal v;
 
-    private BigDecimal tpv;
-
-
-
+    private BigDecimal tpv; // could save tpv, but currently unused
 
     public BigDecimal getTpv() {
         return tpv;

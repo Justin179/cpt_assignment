@@ -1,7 +1,6 @@
 package com.crypto.calculator;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class Driver {
     /*
@@ -12,17 +11,18 @@ public class Driver {
         step 4: calculate how much USD is to be granted with each anniversary's cap
      */
     public static void main(String[] args) throws Exception {
+        //  This service calculate daily based VWAP(Volume Weighted Average Price)
+        ChangeMoneyService service = new ChangeMoneyService();
 
-        ChangeMoneyService service = new ChangeMoneyService(); //  This service calculate daily based VWAP(Volume Weighted Average Price)
         int numberOfDays = 365; // today is her 1st year anniversary, so trace back 365 days
         // VWAP can be calculated with the public candlestick API
         String apiUrl = "https://api.crypto.com/v2/public/get-candlestick?instrument_name=CRO_USDT&timeframe=1D";
-        BigDecimal vwap = service.calculate(numberOfDays, apiUrl);
-        System.out.println("vwap: "+vwap);
+        BigDecimal vwap = service.getVWAP(numberOfDays, apiUrl);
+        System.out.println("vwap: " + vwap);
 
         double X = 100; // Alice Wong's base yearly package of X US dollars
         BigDecimal CROs = service.exchangeCROs(X, vwap);
-        System.out.println("CROs: "+CROs);
+        System.out.println("CROs: " + CROs);
 
         // 1 CRO = 0.4377 USD -> can be found in https://crypto.com/price/crypto-com-coin
         double exchangeRateOfTheDay = 0.4377d; // an arbitrary number
@@ -32,6 +32,6 @@ public class Driver {
         // today is her 1st year anniversary -> 10% cap
         int year = 1;
         BigDecimal cappedUSD = service.cappedUSD(year,usd);
-        System.out.println("capped USD: " + cappedUSD +"(Alice Wong's actual rewards in USD)");
+        System.out.println("capped USD: " + cappedUSD +" (Alice Wong's actual rewards in USD)");
     }
 }
