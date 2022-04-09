@@ -17,14 +17,11 @@ import com.google.gson.JsonObject;
 /**
  * This service calculate daily based VWAP(Volume Weighted Average Price)
  */
-public class VWAPService {
+public class ChangeMoneyService {
 
-    public BigDecimal calculate(int numOfDays){
-        String url = "https://api.crypto.com/v2/public/get-candlestick?instrument_name=CRO_USDT&timeframe=1D";
+    public BigDecimal calculate(int numOfDays, String url){
         InputStream is = null;
-
         BigDecimal vwap = BigDecimal.ZERO;
-
         try{
             is = new URL(url).openStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -53,7 +50,10 @@ public class VWAPService {
 
                 // calculate tpv
                 double typicalPrice = (data.getH()+data.getL()+data.getC()) / 3;
-                BigDecimal tp = new BigDecimal(typicalPrice).setScale(4, RoundingMode.HALF_UP);
+
+                // new BigDecimal(Double.toString(c)) / BigDecimal.valueOf(typicalPrice) either way is fine
+                // Notes: do not do -> BigDecimal(double val) The results of this constructor can be somewhat unpredictable.
+                BigDecimal tp = new BigDecimal(Double.toString(typicalPrice)).setScale(4, RoundingMode.HALF_UP);
                 BigDecimal tpv = tp.multiply(data.getV()).setScale(4, RoundingMode.HALF_UP);
                 data.setTpv(tpv);
 
@@ -66,7 +66,6 @@ public class VWAPService {
             // Calculate VWAP with your information: [cumulative TPV ÷ cumulative volume]. This will provide a volume-weighted average price for each period
             vwap = cumulativeTpv.divide(cumulativeVol, 4, RoundingMode.HALF_UP);
             // e.g. vwap = 0.3812 = 0.3812 USD for 1 CRO (exchange rate)
-            System.out.println(vwap);
 
         }catch(IOException e){
             e.printStackTrace();
@@ -81,4 +80,37 @@ public class VWAPService {
         return vwap;
     }
 
+
+    public BigDecimal exchangeCROs(double usd, BigDecimal vwap) {
+        BigDecimal dollars = new BigDecimal(Double.toString(usd)).setScale(4, RoundingMode.HALF_UP);
+        // https://crypto.com/price/crypto-com-coin -> CRO: two decimal places
+        return dollars.divide(vwap,2,RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal cashOutUSD(BigDecimal cros, double exchangeRate) {
+        BigDecimal exchangeRateOfTheDay = new BigDecimal(Double.toString(exchangeRate)).setScale(4, RoundingMode.HALF_UP);
+        return cros.multiply(exchangeRateOfTheDay).setScale(4,RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal cappedUSD(int year, BigDecimal usd) throws Exception {
+        double cap = 0d;
+        switch (year){
+            case 1:
+                cap = 0.1;
+                break;
+            case 2:
+                cap = 0.2;
+                break;
+            case 3:
+                cap = 0.3;
+                break;
+            case 4:
+                cap = 0.4;
+                break;
+            default:
+                throw new Exception("year out of bound!");
+        }
+        BigDecimal capRate = new BigDecimal(Double.toString(cap)).setScale(4, RoundingMode.HALF_UP);
+        return usd.multiply(capRate).setScale(4,RoundingMode.HALF_UP);
+    }
 }
