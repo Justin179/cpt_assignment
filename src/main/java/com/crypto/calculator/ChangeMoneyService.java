@@ -104,9 +104,10 @@ public class ChangeMoneyService {
             // new BigDecimal(Double.toString(c)) / BigDecimal.valueOf(typicalPrice) either way is fine
             // Notes: do not do -> BigDecimal(double val) The results of this constructor can be somewhat unpredictable.
             BigDecimal tp = new BigDecimal(Double.toString(typicalPrice)).setScale(4, RoundingMode.HALF_UP);
-            BigDecimal tpv = tp.multiply(data.getV()).setScale(4, RoundingMode.HALF_UP);
+            BigDecimal vol = new BigDecimal(Double.toString(data.getV())).setScale(4, RoundingMode.HALF_UP);
+            BigDecimal tpv = tp.multiply(vol).setScale(4, RoundingMode.HALF_UP);
             cumulativeTpv = cumulativeTpv.add(tpv);
-            cumulativeVol = cumulativeVol.add(data.getV());
+            cumulativeVol = cumulativeVol.add(vol);
         }
         // Calculate VWAP with your information: [cumulative TPV ÷ cumulative volume]. This will provide a volume-weighted average price for each period
         vwap = cumulativeTpv.divide(cumulativeVol, 4, RoundingMode.HALF_UP);

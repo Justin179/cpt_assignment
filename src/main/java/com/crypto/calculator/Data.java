@@ -3,17 +3,17 @@ package com.crypto.calculator;
 import java.math.BigDecimal;
 
 public class Data {
-    private long t;
+    private long t; // timestamp
 
-    private double o;
+    private double o; // open
 
-    private double h;
+    private double h; // high
 
-    private double l;
+    private double l; // low
 
-    private double c;
+    private double c; // close
 
-    private BigDecimal v;
+    private double v; // volume
 
     private BigDecimal tpv; // could save tpv, but currently unused
 
@@ -65,11 +65,11 @@ public class Data {
         this.t = t;
     }
 
-    public BigDecimal getV() {
+    public double getV() {
         return v;
     }
 
-    public void setV(BigDecimal v) {
+    public void setV(double v) {
         this.v = v;
     }
 }

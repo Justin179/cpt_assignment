@@ -2,7 +2,7 @@ package com.crypto.calculator;
 
 import java.math.BigDecimal;
 
-public class Driver {
+public class EntryMain {
     /*
     Goal: design a simple program to help Alice to calculate her actual rewards in USD.
         step 1: calculate the daily based vwap in the first 365 days since the employee joined the company.
@@ -20,7 +20,7 @@ public class Driver {
         BigDecimal vwap = service.getVWAP(numberOfDays, apiUrl);
         System.out.println("vwap: " + vwap);
 
-        double X = 100; // Alice Wong's base yearly package of X US dollars
+        double X = 100d; // Alice Wong's base yearly package of X US dollars
         BigDecimal CROs = service.exchangeCROs(X, vwap);
         System.out.println("CROs: " + CROs);
 
